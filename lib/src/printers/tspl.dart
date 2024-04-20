@@ -70,11 +70,14 @@ class Command {
     return createLine(SHIFT, [shiftLeft, shiftTop]);
   }
 
-  static String imageString(String x, String y, String widthByte, String heightDot, {String mode = "0"}) {
+  static String imageString(
+      String x, String y, String widthByte, String heightDot,
+      {String mode = "0"}) {
     return createString(BITMAP, [x, y, widthByte, heightDot, mode, ""]);
   }
 
-  static String reverse(String x, String y, String widthByte, String heightDot) {
+  static String reverse(
+      String x, String y, String widthByte, String heightDot) {
     return createLine(REVERSE, [x, y, widthByte, heightDot]);
   }
 
@@ -165,14 +168,18 @@ class TsplPrinter<T> extends GenericPrinter<T> {
   @override
   Future<bool> beep() async {
     return await sendToConnector(() {
-      return [Command.clearCache(), Command.beep(), Command.close()].join().codeUnits;
+      return [Command.clearCache(), Command.beep(), Command.close()]
+          .join()
+          .codeUnits;
     });
   }
 
   @override
   Future<bool> selfTest() async {
     return await sendToConnector(() {
-      return [Command.clearCache(), Command.selfTest(), Command.close()].join().codeUnits;
+      return [Command.clearCache(), Command.selfTest(), Command.close()]
+          .join()
+          .codeUnits;
     });
   }
 
@@ -185,8 +192,11 @@ class TsplPrinter<T> extends GenericPrinter<T> {
   Future<bool> image(Uint8List image, {int threshold = 150}) async {
     final decodedImage = decodeImage(image)!;
     final rasterizeImage = _toRaster(decodedImage, dpi: int.parse(dpi));
-    final converted = toPixel(ImageData(width: decodedImage.width, height: decodedImage.height),
-        paperWidth: int.parse(_sizeWidth), dpi: int.parse(dpi), isTspl: true);
+    final converted = toPixel(
+        ImageData(width: decodedImage.width, height: decodedImage.height),
+        paperWidth: int.parse(_sizeWidth),
+        dpi: int.parse(dpi),
+        isTspl: true);
 
     final ms = 1000 + (converted.height * 0.5).toInt();
 
@@ -195,7 +205,10 @@ class TsplPrinter<T> extends GenericPrinter<T> {
         List<int> buffer = [];
         buffer += this._config.codeUnits;
         buffer += Command.clearCache().codeUnits;
-        buffer += Command.imageString('0', '0', converted.width.toString(), converted.height.toString(), mode: '0').codeUnits;
+        buffer += Command.imageString('0', '0', converted.width.toString(),
+                converted.height.toString(),
+                mode: '0')
+            .codeUnits;
         buffer += rasterizeImage.data;
         buffer += Command.EOL_HEX;
         buffer += Command.printIt('1', repeat: '1').codeUnits;
@@ -214,7 +227,9 @@ class TsplPrinter<T> extends GenericPrinter<T> {
     // height 25mm = 200px
     final int multiplier = dpi == 200 ? 8 : 12;
     final Image image = copyResize(imgSrc,
-        width: int.parse(this._sizeWidth) * multiplier, height: int.parse(this._sizeHeight) * multiplier, interpolation: Interpolation.linear);
+        width: int.parse(this._sizeWidth) * multiplier,
+        height: int.parse(this._sizeHeight) * multiplier,
+        interpolation: Interpolation.linear);
     final int widthPx = image.width;
     final int heightPx = image.height;
     final int widthBytes = widthPx ~/ 8; // one byte is 8 bits
@@ -222,7 +237,10 @@ class TsplPrinter<T> extends GenericPrinter<T> {
 
     List<int> monoPixel = [];
     for (int i = 0; i < imageBytes.length; i += 4) {
-      bool shouldBeWhite = imageBytes[i + 3] == 0 || (imageBytes[i] > 100 && imageBytes[i + 1] > 100 && imageBytes[i + 2] > 100);
+      bool shouldBeWhite = imageBytes[i + 3] == 0 ||
+          (imageBytes[i] > 100 &&
+              imageBytes[i + 1] > 100 &&
+              imageBytes[i + 2] > 100);
       monoPixel.add(shouldBeWhite ? 1 : 0);
     }
 
@@ -235,7 +253,10 @@ class TsplPrinter<T> extends GenericPrinter<T> {
       }
     }
 
-    return new ImageRaster(data: rasterizeImage, width: widthBytes.toString(), height: heightPx.toString());
+    return new ImageRaster(
+        data: rasterizeImage,
+        width: widthBytes.toString(),
+        height: heightPx.toString());
   }
 
   @override

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_pos_printer_platform_image_3/discovery.dart';
-import 'package:flutter_pos_printer_platform_image_3/flutter_pos_printer_platform_image_3.dart';
+import 'package:flutter_pos_printer_platform_image_3/esc_pos_printer_usb.dart';
 import 'package:rxdart/rxdart.dart';
 
 class BluetoothPrinterInput extends BasePrinterInput {
@@ -25,7 +25,8 @@ class BluetoothPrinterDevice {
   BluetoothPrinterDevice({required this.address});
 }
 
-class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInput> {
+class BluetoothPrinterConnector
+    implements PrinterConnector<BluetoothPrinterInput> {
   // ignore: unused_element
   BluetoothPrinterConnector._({this.address = "", this.isBle = false}) {
     if (Platform.isAndroid)
@@ -65,19 +66,23 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
   static BluetoothPrinterConnector get instance => _instance;
 
   Stream<MethodCall> get _methodStream => _methodStreamController.stream;
-  final StreamController<MethodCall> _methodStreamController = StreamController.broadcast();
+  final StreamController<MethodCall> _methodStreamController =
+      StreamController.broadcast();
   PublishSubject _stopScanPill = new PublishSubject();
 
   BehaviorSubject<bool> _isScanning = BehaviorSubject.seeded(false);
   Stream<bool> get isScanning => _isScanning.stream;
 
-  BehaviorSubject<List<PrinterDevice>> _scanResults = BehaviorSubject.seeded([]);
+  BehaviorSubject<List<PrinterDevice>> _scanResults =
+      BehaviorSubject.seeded([]);
   Stream<List<PrinterDevice>> get scanResults => _scanResults.stream;
 
   Stream<BTStatus> get _statusStream => _statusStreamController.stream;
-  final StreamController<BTStatus> _statusStreamController = StreamController.broadcast();
+  final StreamController<BTStatus> _statusStreamController =
+      StreamController.broadcast();
 
-  BluetoothPrinterConnector({required this.address, required this.isBle, this.name}) {
+  BluetoothPrinterConnector(
+      {required this.address, required this.isBle, this.name}) {
     flutterPrinterChannel.setMethodCallHandler((MethodCall call) {
       _methodStreamController.add(call);
       return Future(() => null);
@@ -96,10 +101,12 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
   setName(String name) => this.name = name;
   setIsBle(bool isBle) => this.isBle = isBle;
 
-  static DiscoverResult<BluetoothPrinterDevice> discoverPrinters({bool isBle = false}) async {
+  static DiscoverResult<BluetoothPrinterDevice> discoverPrinters(
+      {bool isBle = false}) async {
     if (Platform.isAndroid) {
-      final List<dynamic> results =
-          isBle ? await flutterPrinterChannel.invokeMethod('getBluetoothLeList') : await flutterPrinterChannel.invokeMethod('getBluetoothList');
+      final List<dynamic> results = isBle
+          ? await flutterPrinterChannel.invokeMethod('getBluetoothLeList')
+          : await flutterPrinterChannel.invokeMethod('getBluetoothList');
       return results
           .map((dynamic r) => PrinterDiscovered<BluetoothPrinterDevice>(
                 name: r['name'],
@@ -126,7 +133,9 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
     _scanResults.add(<PrinterDevice>[]);
 
     if (Platform.isAndroid) {
-      isBle ? flutterPrinterChannel.invokeMethod('getBluetoothLeList') : flutterPrinterChannel.invokeMethod('getBluetoothList');
+      isBle
+          ? flutterPrinterChannel.invokeMethod('getBluetoothLeList')
+          : flutterPrinterChannel.invokeMethod('getBluetoothList');
 
       await for (dynamic data in _methodStream
           .where((m) => m.method == "ScanResult")
@@ -135,7 +144,8 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
           // .takeUntil(TimerStream(3, Duration(seconds: 5)))
           .doOnDone(stopScan)
           .map((message) => message)) {
-        var device = PrinterDevice(name: data['name'] as String, address: data['address'] as String?);
+        var device = PrinterDevice(
+            name: data['name'] as String, address: data['address'] as String?);
         if (!_addDevice(device)) continue;
         yield device;
       }
@@ -156,7 +166,8 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
           .doOnDone(stopScan)
           .map((message) => message)) {
         print('Scan result: $data');
-        final device = PrinterDevice(name: data['name'] as String, address: data['address'] as String?);
+        final device = PrinterDevice(
+            name: data['name'] as String, address: data['address'] as String?);
         if (!_addDevice(device)) continue;
         yield device;
       }
@@ -196,9 +207,13 @@ class BluetoothPrinterConnector implements PrinterConnector<BluetoothPrinterInpu
         "isBle": model?.isBle ?? isBle,
         "autoConnect": model?.autoConnect ?? false
       };
-      return await flutterPrinterChannel.invokeMethod('onStartConnection', params);
+      return await flutterPrinterChannel.invokeMethod(
+          'onStartConnection', params);
     } else if (Platform.isIOS) {
-      Map<String, dynamic> params = {"name": model?.name ?? name, "address": model?.address ?? address};
+      Map<String, dynamic> params = {
+        "name": model?.name ?? name,
+        "address": model?.address ?? address
+      };
       return await iosChannel.invokeMethod('connect', params);
     }
     return false;
