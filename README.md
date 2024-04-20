@@ -1,6 +1,6 @@
 # flutter_pos_printer_platform
 
-[![Pub Version](https://img.shields.io/badge/pub-v1.1.1-green)](https://pub.dev/packages/flutter_pos_printer_platform_image_3)
+<!-- [![Pub Version](https://img.shields.io/badge/pub-v1.1.1-green)](https://pub.dev/packages/flutter_pos_printer_platform_image_3) -->
 
 A library to discover printers, and send printer commands.
 
@@ -8,25 +8,25 @@ This library allows to print esc commands to printers in different platforms suc
 
 Inspired by [flutter_pos_printer](https://github.com/feedmepos/flutter_printer/tree/master/packages/flutter_pos_printer).
 
-
 ## Main Features
-* Android, iOS and Windows support
-* Scan for bluetooth devices
-* Send raw `List<int> bytes` data to a device, review this library to generate ESC/POS commands [flutter_esc_pos_utils](https://pub.dev/packages/flutter_esc_pos_utils).
+
+- Android, iOS and Windows support
+- Scan for bluetooth devices
+- Send raw `List<int> bytes` data to a device, review this library to generate ESC/POS commands [flutter_esc_pos_utils](https://pub.dev/packages/flutter_esc_pos_utils).
 
 ## Features
 
-|                         |      Android       |         iOS          |      Windows       |            Description            |
-| :---------------        | :----------------: | :------------------: | :----------------: | :-------------------------------- |
-| USB interface           | :white_check_mark: |  :white_square_button: | :white_check_mark: | Allows connection with usb devices. |
-| Bluetooth classic interface | :white_check_mark: |  :white_square_button:  | :white_square_button: | Allows connection with classic bt devices. |
-| Bluetooth low energy (BLE) interface | :white_check_mark: |  :white_check_mark:  | :white_square_button: | Allows connection with bt BLE devices. |
-| Net (ethernet/wifi) interface | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | Allows connection with network devices. |
-| scan                    | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | Starts a scan for only Bluetooth devices or network devices(Android/iOS). |
-| connect                 | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | Establishes a connection to the device. |
-| disconnect              | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | Cancels an active or pending connection to the device. |
-| state                   | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | Stream of state changes for the Bluetooth Device. |
-| print                   | :white_check_mark: |  :white_check_mark:  | :white_check_mark: | print bytes. |
+|                                      |      Android       |          iOS          |        Windows        | Description                                                               |
+| :----------------------------------- | :----------------: | :-------------------: | :-------------------: | :------------------------------------------------------------------------ |
+| USB interface                        | :white_check_mark: | :white_square_button: |  :white_check_mark:   | Allows connection with usb devices.                                       |
+| Bluetooth classic interface          | :white_check_mark: | :white_square_button: | :white_square_button: | Allows connection with classic bt devices.                                |
+| Bluetooth low energy (BLE) interface | :white_check_mark: |  :white_check_mark:   | :white_square_button: | Allows connection with bt BLE devices.                                    |
+| Net (ethernet/wifi) interface        | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | Allows connection with network devices.                                   |
+| scan                                 | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | Starts a scan for only Bluetooth devices or network devices(Android/iOS). |
+| connect                              | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | Establishes a connection to the device.                                   |
+| disconnect                           | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | Cancels an active or pending connection to the device.                    |
+| state                                | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | Stream of state changes for the Bluetooth Device.                         |
+| print                                | :white_check_mark: |  :white_check_mark:   |  :white_check_mark:   | print bytes.                                                              |
 
 ## Getting Started
 
@@ -47,6 +47,7 @@ Generate bytes to print through [flutter_esc_pos_utils](https://pub.dev/packages
 ```
 
 ## Android
+
 Allow to connect bluetooth (classic and BLE), USB and network devices
 
 ### Change the minSdkVersion for Android
@@ -54,6 +55,7 @@ Allow to connect bluetooth (classic and BLE), USB and network devices
 flutter_pos_printer_platform is compatible only from version 21 of Android SDK so you should change this in android/app/build.gradle:
 
 In build.gradle set
+
 ```
     defaultConfig {
         ...
@@ -70,14 +72,16 @@ if select bluetooth you can send optional params
 - autoconnect -> allow to reconnect when state of device is None
 
 ## iOS
+
 Allow to connect bluetooth (BLE) and network devices
 
 ## Windows
+
 Allow to connect USB and network devices
 To network devices is necessary to set ipAddress
 
-
 ## How to use it
+
 ### init a PrinterManager instance
 
 ```dart
@@ -85,7 +89,7 @@ import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 
     var printerManager = PrinterManager.instance;
 
- ```
+```
 
 ### scan
 
@@ -127,6 +131,7 @@ _connectDevice(PrinterDevice selectedPrinter, PrinterType type, {bool reconnect 
     }
   }
 ```
+
 ### disconnect
 
 ```dart
@@ -136,6 +141,7 @@ _connectDevice(PrinterDevice selectedPrinter, PrinterType type, {bool reconnect 
 ```
 
 ### listen bluetooth state
+
 ```dart
     PrinterManager.instance.stateBluetooth.listen((status) {
       log(' ----------------- status bt $status ------------------ ');
@@ -143,8 +149,9 @@ _connectDevice(PrinterDevice selectedPrinter, PrinterType type, {bool reconnect 
 ```
 
 ### send bytes to print
+
 ```dart
-    _sendBytesToPrint(List<int> bytes, PrinterType type) async { 
+    _sendBytesToPrint(List<int> bytes, PrinterType type) async {
       PrinterManager.instance.send(type: type, bytes: bytes);
     }
 
@@ -167,15 +174,12 @@ info.plist add:
 </array>
 ```
 
-
 ## Credits
+
 - https://github.com/andrey-ushakov/esc_pos_utils
 - https://github.com/bailabs/esc-pos-printer-flutter
 - https://github.com/feedmepos/flutter_printer/tree/master/packages/flutter_pos_printer
 
-
 ## Support me
 
 If you think that this project has helped you with your developments, you can support this project, any support is much appreciated.
-
-[![Paypal](https://raw.githubusercontent.com/arthas1888/flutter_pos_printer_platform/main/btn-sm-paypal-payment.png)](https://www.paypal.com/donate/?hosted_button_id=92HK6VNCK7MUY)
